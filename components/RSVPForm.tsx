@@ -249,7 +249,7 @@ export default function RSVPForm() {
 
                 {guests.length === 0 && (
                   <p className="text-xs text-wedding-darkTeal/50 italic">
-                    Нажмите "Добавить гостя", если планируете прийти не один
+                    Нажмите &quot;Добавить гостя&quot;, если планируете прийти не один
                   </p>
                 )}
               </div>
