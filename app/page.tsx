@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import Hero from '@/components/Hero'
 import MeetUs from '@/components/MeetUs'
 import EventInfo from '@/components/EventInfo'
@@ -22,9 +21,7 @@ export default function Home() {
       {weddingConfig.googleForm.enabled && weddingConfig.googleForm.url ? (
         <GoogleForm formUrl={weddingConfig.googleForm.url} />
       ) : (
-        <Suspense fallback={<div className="py-12 px-4 bg-white"><div className="max-w-2xl mx-auto text-center">Загрузка формы...</div></div>}>
-          <RSVPForm />
-        </Suspense>
+        <RSVPForm />
       )}
       <ThankYou />
     </main>

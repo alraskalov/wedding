@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { weddingConfig } from '@/config/wedding'
 
@@ -14,13 +13,11 @@ interface RSVPFormData {
 }
 
 export default function RSVPForm() {
-  const searchParams = useSearchParams()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  
-  const urlName = searchParams.get('name')
-  const urlGuests = searchParams.get('guests')
-  const personalGreeting = urlName ? `, ${decodeURIComponent(urlName)}` : ''
+  const [urlName, setUrlName] = useState<string | null>(null)
+  const [urlGuests, setUrlGuests] = useState<string | null>(null)
+  const [personalGreeting, setPersonalGreeting] = useState('')
   
   const {
     register,
@@ -32,22 +29,31 @@ export default function RSVPForm() {
     control,
   } = useForm<RSVPFormData>({
     defaultValues: {
-      name: urlName ? decodeURIComponent(urlName) : '',
-      guests: urlGuests 
-        ? urlGuests.split(',').map(g => ({ name: decodeURIComponent(g.trim()) }))
-        : [],
+      name: '',
+      guests: [],
     },
   })
 
   useEffect(() => {
-    if (urlName) {
-      setValue('name', decodeURIComponent(urlName))
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const name = params.get('name')
+      const guests = params.get('guests')
+      
+      setUrlName(name)
+      setUrlGuests(guests)
+      
+      if (name) {
+        setPersonalGreeting(`, ${decodeURIComponent(name)}`)
+        setValue('name', decodeURIComponent(name))
+      }
+      
+      if (guests) {
+        const guestsList = guests.split(',').map(g => ({ name: decodeURIComponent(g.trim()) }))
+        setValue('guests', guestsList)
+      }
     }
-    if (urlGuests) {
-      const guestsList = urlGuests.split(',').map(g => ({ name: decodeURIComponent(g.trim()) }))
-      setValue('guests', guestsList)
-    }
-  }, [urlName, urlGuests, setValue])
+  }, [setValue])
 
   const guests = watch('guests') || []
 
